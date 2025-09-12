@@ -1,0 +1,354 @@
+<!-- <style>
+/* Tabs container */
+.custom-tabs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+}
+
+/* Individual tab buttons */
+.tab-link {
+  border-radius: .55rem !important;
+  padding: 1rem 1.35rem;
+  color: #397ef6;
+  background-color: transparent;
+  font-weight: 800;
+  border: 1px solid #397ef6;
+  width: 150px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+/* Active tab */
+.tab-link.active {
+  background-color: #397ef6;
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Hover effect ONLY for active */
+.tab-link.active:hover {
+  background-color: rgba(57, 126, 246, 0.85);
+}
+
+/* No hover effect for inactive tabs */
+.tab-link:not(.active):hover {
+  background-color: #f1f5ff;
+  color: #397ef6;
+}
+</style> -->
+<style>
+
+.custom-tabs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-radius: .45rem;
+    background-color: #fff;
+}
+
+/* Individual tab buttons */
+.tab-link {
+    border: 1px solid #ebe3e3;
+    border-radius: .45rem;
+    padding: .45rem 1.35rem;
+    margin: 5px;
+    background-color: transparent;
+    font-weight: 600;
+    width: 160px;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+
+.tab-link.active {
+  background-color: #ebe3e3;
+  font-weight: 800;
+}
+.tab-link:not(.active):hover {
+  background-color: #f5efef;
+
+}
+
+</style>
+<%
+// Helper to format numbers with thousands separators.
+// Adjust locale if you want different separators (e.g. 'fr-FR').
+function fmt(n) {
+  if (n === null || n === undefined || n === '') return 'N/A';
+  const num = Number(n);
+  if (isNaN(num)) return 'N/A';
+  return num.toLocaleString('en-US');
+}
+%>
+<div class="row">
+    <div class="mb-4">
+    <a href="/banks/list" class="btn p-0 border-0 bg-transparent text-primary text-decoration-none">
+      <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="1.25"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-left"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l4 4" /><path d="M5 12l4 -4" /></svg>
+      Back to List
+    </a>
+
+  </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Bank Information</h4>
+            </div>
+            <div class="card-body">
+                
+                <% if (bankinfo) { %>
+                    <div class="d-flex flex-column gap-3">
+
+                        <div class="d-flex align-items-center">
+                            
+                            <strong class="me-2">Name:</strong>
+                            <span>
+                                <%= bankinfo.name %>
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            
+                            <strong class="me-2">Code:</strong>
+                            <span>
+                                <%= bankinfo.code %>
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            
+                            <strong class="me-2">Disabled:</strong>
+                            <span>
+                                <%= bankinfo.is_disabled %>
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            
+                            <strong class="me-2">Interest Rate:</strong>
+                            <span>
+                                <%= bankinfo.BankConfig.interest_rate %>
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                          <strong class="me-2">Remaining Amount:</strong>
+                          <span>
+                            <%= (bankfund && bankfund.length > 0) ? fmt(bankfund[0].remaining_amount) + ' XAF' : 'N/A' %>
+                          </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                          <strong class="me-2">Used Amount:</strong>
+                          <span>
+                            <%= (bankfund && bankfund.length > 0) ? fmt(bankfund[0].used_amount) + ' XAF' : 'N/A' %>
+                          </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                          <strong class="me-2">Pending Amount:</strong>
+                          <span>
+                            <%= (bankfund && bankfund.length > 0) ? fmt(bankfund[0].blocked_amount) + ' XAF' : 'N/A' %>
+                          </span>
+                        </div>
+
+
+                    </div>
+                <% } else { %>
+                    <p class="text-muted">No bank information available.</p>
+                <% } %>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Quick Actions</h4>
+            </div>
+
+            <div class="card-body">
+                
+                <div class="d-grid gap-2">
+                    <button type="button"
+                        class="btn btn-light border d-flex align-items-center justify-content-start gap-3 w-100 mb-2"
+                        data-bs-toggle="modal" data-bs-target="#editBankModal">
+                        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="1.25"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
+                        <span>Edit bank</span>
+                    </button>
+
+                    <button type="button"
+                        class="btn btn-light border d-flex align-items-center justify-content-start gap-3 w-100 mb-2"
+                        data-bs-toggle="modal" data-bs-target="#deleteBankModal">
+                        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="1.25"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                        <span>Delete bank</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <ul class="custom-tabs d-flex " role="tablist">
+                <li class="tab-item" role="presentation">
+                    <button class="tab-link active" id="pills-transactions-tab-nobd" data-bs-toggle="pill" href="#pills-transactions-nobd"
+                        role="tab" aria-controls="pills-transactions-nobd" aria-selected="false">
+                        Transactions
+                    </button>
+                </li>
+                
+            </ul>
+
+        </div>
+
+        <div class="card-body">
+           
+            <div class="tab-content mt-2 mb-3" id="pills-without-border-tabContent">
+                
+                <div class="tab-pane fade show active" id="pills-transactions-nobd" role="tabpanel"
+                    aria-labelledby="pills-transactions-tab-nobd">
+                    <div class="table-responsive">
+                        <table id="page-length" class="display table dataTable">
+                            <thead>
+                                <tr>
+                                    <th class="table-plus">#</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (transaction.length> 0) { %>
+                                    <% transaction.forEach((transactions,index )=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= index + 1 %>
+                                            </td>
+                                            <td>
+                                                <%= Number(transactions.amount).toLocaleString('en-US') %> XAF
+                                            </td>
+                                            <td>
+                                                <% if (transactions.transaction_type === 'DEPOSIT') { %>
+                                                    <span class="badge bg-secondary">Deposit</span>
+                                                <% } else if (transactions.transaction_type === 'WITHDRAWAL') { %>
+                                                    <span class="badge bg-info-subtle text-black">Withdrawal</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-secondary"><%= transactions.transaction_type %></span>
+                                                <% } %>
+                                            </td>
+
+                                           
+                                            <%
+                                                let createdAt = 'N/A';
+                                                try {
+                                                    const d = new Date(transactions.createdAt);
+                                                    const weekday = d.toLocaleDateString('en-US', { weekday: 'short' });  
+                                                    const day = String(d.getDate()).padStart(2, '0');
+                                                    const month = d.toLocaleDateString('en-US', { month: 'short' });          
+                                                    const year = d.getFullYear();
+                                                    const hours = d.getHours().toString().padStart(2, '0');
+                                                    const minutes = d.getMinutes().toString().padStart(2, '0');
+                                                    createdAt = `${weekday} ${day} ${month} ${year} ${hours}:${minutes}`;
+                                                } catch (err) {
+                                                    createdAt = 'Invalid Date';
+                                                }
+                                            %>
+                                            <td>
+                                                <%= createdAt %>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                        
+                                <% }else { %>
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">No transactions found.</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+               
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Bank Confirmation Modal -->
+<div class="modal fade" id="deleteBankModal" tabindex="-1" aria-labelledby="deleteBankModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/banks/<%= bankinfo.id %>/delete" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="deleteBankModalLabel">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+          <p>Are you sure you want to delete the bank <strong><%= bankinfo.name %></strong>? This action cannot be undone.</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt me-1"></i> Yes, Delete
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Bank Modal -->
+<div class="modal fade" id="editBankModal" tabindex="-1" aria-labelledby="editBankModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="editBankForm" action="/banks/<%= bankinfo.id %>/update" method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editBankModalLabel">Edit Bank</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="bankName" class="form-label">Bank Name</label>
+            <input type="text" class="form-control" id="bankName" name="name" value="<%= bankinfo.name %>" required>
+          </div>
+          <div class="mb-3">
+            <label for="bankCode" class="form-label">Bank Code</label>
+            <input type="text" class="form-control" id="bankCode" name="code" value="<%= bankinfo.code %>" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="updateBankBtn">
+            <span id="updateBankBtnText">Update</span>
+            <span id="updateBankBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('editBankForm').addEventListener('submit', function () {
+    const updateBtn = document.getElementById('updateBankBtn');
+    const btnText = document.getElementById('updateBankBtnText');
+    const btnSpinner = document.getElementById('updateBankBtnSpinner');
+
+    updateBtn.disabled = true;
+    btnText.textContent = 'Updating...';
+    btnSpinner.classList.remove('d-none');
+  });
+</script>

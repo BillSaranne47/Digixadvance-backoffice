@@ -1,0 +1,8 @@
+<h2>Set up Two-Factor Authentication</h2>
+<p>Scan this QR code with Google Authenticator or Authy:</p>
+<img src="<%= qrCodeUrl %>" alt="QR Code">
+<form method="POST" action="/twofa/setup">
+  <label>Enter the 6-digit code from your app:</label>
+  <input type="text" name="token" required>
+  <button type="submit">Verify</button>
+</form>

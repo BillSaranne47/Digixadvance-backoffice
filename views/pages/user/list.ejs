@@ -1,0 +1,229 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex align-items-center">
+          <h4 class="card-title"><%= __('User List') %></h4>
+
+          <a class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#createUserModal">
+            <i class="fa fa-plus me-2"></i>
+            <%= __('Add User') %>
+          </a>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table id="page-length" class="display table dataTable">
+            <thead>
+              <tr>
+                <th class="table-plus">#</th>
+                <th><%= __('User Name') %></th>
+                <th><%= __('Email') %></th>
+                <th><%= __('phone_number') %></th>
+                <th><%= __('Bank Name') %></th>
+                <th class="no-export"><%= __('Action') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (users.length> 0) { %> <% users.forEach((user,index )=> { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= user.username %></td>
+                <td><%= user.email %></td>
+                <td><%= user.msisdn %></td>
+                <td><%= user.bank_name %></td>
+
+                <td>
+                  <div class="form-button-action">
+                    <a
+                      href=""
+                      class="btn border-info-subtle me-3"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editUserModal"
+                      data-user-id="<%= user.id %>"
+                      data-user-username="<%= user.username %>"
+                      data-user-email="<%= user.email %>"
+                    >
+                     <%= __('Edit') %>
+                    </a>
+
+                    <form action="/users/<%= user.id %>/delete" method="POST">
+                      <input type="hidden" name="_method" value="DELETE" />
+                      <button
+                        type="button"
+                        class="btn btn-delete border-danger-subtle"
+                        id="alert_demo_7"
+                        data-id="<%= user.id %>"
+                      >
+                       <%= __('Delete') %>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+                               <% }); %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="5" class="text-center text-muted"><%= __('No Users found.') %></td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+
+        </div>
+         
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<!-- Create User Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="createUserForm" action="/users/save" method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createUserModalLabel"><%= __('Create User') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row">
+              <div class="form-group">
+                <label for="username"><%= __('Name') %></label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="<%= __('Enter a username') %>" required />
+              </div>
+
+              <div class="form-group">
+                <label for="email"><%= __('Email') %></label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="example@ex.com" required />
+              </div>
+
+              <div class="form-group">
+                <label for="msisdn"><%= __('Phone Number') %></label>
+                <div class="input-group">
+                  <span class="input-group-text">+237</span>
+                  <input type="tel" class="form-control" id="msisdn" name="msisdn" placeholder="6xxxxxxx" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="role"><%= __('Select a Role') %></label>
+                <select class="form-control" id="role" name="role" required>
+                  <option value=""><%= __('-- Choose a Role --') %></option>
+                  <% roles.forEach(role => { %>
+                    <option value="<%= role.name %>"><%= role.name %></option>
+                  <% }); %>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="bank_id"><%= __('Select Bank') %></label>
+                <select class="form-control" id="bank_id" name="bank_id" required>
+                  <option value=""><%= __('-- Choose a Bank --') %></option>
+                  <% banks.forEach(bank => { %>
+                    <option value="<%= bank.id %>"><%= bank.name %> (<%= bank.code %>)</option>
+                  <% }); %>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="password"><%= __('Password') %></label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="******" required />
+              </div>
+            
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><%= __('Cancel') %></button>
+          <button type="submit" class="btn btn-primary" id="createUserSubmitBtn">
+            <span id="submitUserText"><%= __('Create') %></span>
+            <span id="submitUserSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="editUserForm" method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel"><%= __('Edit User') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+ 
+          <div class="mb-3">
+            <label for="editUsername" class="form-label"><%= __('Username') %></label>
+            <input type="text" class="form-control" id="editUsername" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="editEmail" class="form-label"><%= __('Email') %></label>
+            <input type="email" class="form-control" id="editEmail" name="email">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><%= __('Cancel') %></button>
+          <button type="submit" class="btn btn-primary" id="updateBtn">
+            <span id="updateBtnText"><%= __('Update User') %></span>
+            <span id="updateBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status"
+              aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const editUserModal = document.getElementById('editUserModal');
+  editUserModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const userId = button.getAttribute('data-user-id');
+    const username = button.getAttribute('data-user-username');
+    const email = button.getAttribute('data-user-email');
+
+    const form = document.getElementById('editUserForm');
+    form.action = `/users/${userId}/updateUser`;
+
+    document.getElementById('editUsername').value = username;
+    document.getElementById('editEmail').value = email;
+  });
+</script>
+
+<!-- spinner -->
+<script>
+  document.getElementById('editUserForm').addEventListener('submit', function (e) {
+    const updateBtn = document.getElementById('updateBtn');
+    const btnText = document.getElementById('updateBtnText');
+    const btnSpinner = document.getElementById('updateBtnSpinner');
+
+    // Active le loader
+    updateBtn.disabled = true;
+    btnText.textContent = '<%= __("Updating...") %>';
+    btnSpinner.classList.remove('d-none');
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const createForm = document.getElementById('createUserForm');
+    const submitBtn = document.getElementById('createUserSubmitBtn');
+    const submitText = document.getElementById('submitUserText');
+    const submitSpinner = document.getElementById('submitUserSpinner');
+
+    createForm.addEventListener('submit', function () {
+      submitBtn.disabled = true;
+      submitText.textContent = '<%= __("Creating...") %>';
+      submitSpinner.classList.remove('d-none');
+    });
+  });
+</script>

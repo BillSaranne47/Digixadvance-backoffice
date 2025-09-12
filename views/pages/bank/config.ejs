@@ -1,0 +1,140 @@
+
+<div class="row">
+    
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <h4 class="card-title">Config List</h4>
+                    <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#createConfigModal">
+                        <i class="fa fa-plus"></i> Create Config
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="page-length" class="display table table-striped table-hover dataTable">
+                        <thead>
+                            <tr>
+                                <th class="table-plus">#</th>
+                                <th>id</th>
+                                <th>Interest Rate</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (bankConfig.length> 0) { %>
+                                <% bankConfig.forEach((Config,index )=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td>
+                                            <%= Config.id %>
+                                        </td>
+                                        <td>
+                                            <%= Config.interest_rate %>
+                                        </td>
+                                        <td>
+                                            <button type="button" 
+                                                class="btn btn-link btn-primary btn-lg btn-update-config" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#updateConfigModal"
+                                                data-config-id="<%= Config.id %>"
+                                                title="Config ID: <%= Config.id %>"
+                                                data-interest_rate="<%= Config.interest_rate %>">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <div class="form-button-action">
+                                               
+                                                <form action="/banks/<%= Config.id %>/delete" method="POST">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <button type="button" class="btn btn-delete text-danger" id="alert_demo_7" data-id="<%= Config.id %>" title="Delete">
+                                                        <i class="fa fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                <% }); %>
+                                    
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+   
+<!-- create config Modal -->
+<div class="modal fade" id="createConfigModal" tabindex="-1" aria-labelledby="createConfigModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="/banks/saveConfig" method="post">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createConfigModalLabel">Create New Config</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="form-group mb-3">
+            <label for="interest_rate">Interest Rate</label>
+            <input type="text" class="form-control"  name="interest_rate" placeholder="Ex: 0.00" required>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Submit</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- update config Modal -->
+<div class="modal fade" id="updateConfigModal" tabindex="-1" aria-labelledby="updateConfigModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="/banks/updateConfig" method="post">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateConfigModalLabel">Update Config</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="form-group mb-3">
+            <input type="hidden" id="config_id" name="configId" />
+            <label for="interest_rate">Interest Rate</label>
+            <input type="text" class="form-control" id="interest_rate"  name="interest_rate" placeholder="Ex: 0.00" required>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Submit</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- update config Modal script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.btn-update-config').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const configId = btn.dataset.configId;
+                const interest_rate = btn.dataset.interest_rate;
+
+                console.log('Clicked edit button - configId:', configId, 'interest_rate:', interest_rate);
+
+                document.getElementById('config_id').value = configId;
+                document.getElementById('interest_rate').value = interest_rate;
+            });
+        });
+    });
+</script>

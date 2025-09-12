@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiXavance</title>
+    <link rel="icon" href="/assets/img/kaiadmin/app_icon.png" type="image/x-icon"/>
+     <!-- Fonts and icons -->
+    <script src="/assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+      WebFont.load({
+        google: {
+          families: [
+            "Public Sans:300,400,500,600,700",
+            "Inter:400,500,600,700"
+          ]
+        },
+        custom: {
+          families: [
+            "Font Awesome 5 Solid",
+            "Font Awesome 5 Regular",
+            "Font Awesome 5 Brands",
+            "simple-line-icons",
+          ],
+          urls: ["/assets/css/fonts.min.css"],
+        },
+        active: function () {
+          sessionStorage.fonts = true;
+        },
+      });
+    </script>
+     	  <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="/assets/css/kaiadmin.min.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+
+    <!-- Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/css/datatables-buttons.css">
+  
+</head>
+<body>
+ 
+  <div class="wrapper">
+    <%- include('./partials/sidebar') %>
+
+    <div class="main-panel">
+      <div class="main-header">
+        <div class="main-header-logo">
+
+          <%- include('./partials/header_logo') %>
+        </div>
+
+        <%- include('./partials/header') %>
+      </div>
+      <div class="container">
+        <div class="page-inner position-relative">
+
+          <!-- Loader -->
+          <div id="pageContentLoader" class="d-none"
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 1000;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" class="text-center">
+              <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+              <div id="pageContentLoaderText" class="mt-3 fw-semibold text-primary fs-5">Loading...</div>
+            </div>
+          </div>
+
+          <!-- Main Content -->
+          <div class="position-relative" style="min-height: 300px;">
+            <div id="pageInnerContent">
+              <%- body %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      
+     
+
+    </div>
+
+  </div>
+ <script>
+    const pageLoader = document.getElementById('pageContentLoader');
+    const pageLoaderText = document.getElementById('pageContentLoaderText');
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const navLinks = document.querySelectorAll('.nav-collapse a');
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', function () {
+          const href = this.getAttribute('href');
+
+          // Dynamic text based on route
+          if (href.includes('/clients')) {
+            pageLoaderText.innerText = 'Loading Clients...';
+          } else if (href.includes('/funds')) {
+            pageLoaderText.innerText = 'Loading Funds...';
+          } else if (href.includes('/dashboard')) {
+            pageLoaderText.innerText = 'Loading Dashboard...';
+          }else if (href.includes('/banks')) {
+            pageLoaderText.innerText = 'Loading Banks...';
+          }else if (href.includes('/users')) {
+            pageLoaderText.innerText = 'Loading Users...';
+          } else {
+            pageLoaderText.innerText = 'Loading...';
+          }
+
+          pageLoader.classList.remove('d-none');
+        });
+      });
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!--   Core JS Files   -->
+  <script src="/assets/js/core/jquery-3.7.1.min.js"></script>
+  <script src="/assets/js/core/popper.min.js"></script>
+  <script src="/assets/js/core/bootstrap.min.js"></script>
+
+  <!-- jQuery Scrollbar -->
+  <script src="/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+  <!-- jQuery Sparkline -->
+  <script src="/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+
+  <script src="/assets/js/kaiadmin.min.js"></script>
+  <!-- Datatables -->
+  <script src="/assets/js/plugin/datatables/datatables.min.js"></script>
+
+  <!--exports buttons JS -->
+  <script src="/assets/js/plugin/datatables/datatables.min.js"></script>
+  <script src="/assets/js/plugin/datatables/dataTables.buttons.min.js"></script>
+  <script src="/assets/js/plugin/datatables/jszip.min.js"></script>
+  <script src="/assets/js/plugin/datatables/buttons.html5.min.js"></script>
+  <script src="/assets/js/plugin/datatables/buttons.print.min.js"></script>
+  <script src="/assets/js/plugin/datatables/pdfmake.min.js"></script>
+  <script src="/assets/js/plugin/datatables/vfs_fonts.js"></script>
+  <script src="/assets/js/plugin/datatables/datatables-export.js"></script>
+
+<script>
+  
+</script>
+  <!-- Notification Handler -->
+  <script>
+      // Function to show toast notification
+      function showToast(message, type = 'error') {
+          const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 5000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                  toast.addEventListener('mouseenter', Swal.stopTimer)
+                  toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+          });
+          
+          Toast.fire({
+              icon: type,
+              title: message
+          });
+      }
+
+      // Check for messages in URL or from server
+      document.addEventListener('DOMContentLoaded', function() {
+          // Check URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          const error = urlParams.get('error');
+          const success = urlParams.get('success');
+    const info = urlParams.get('info');
+          
+          if (error) {
+              showToast(decodeURIComponent(error), 'error');
+          }
+          if (success) {
+              showToast(decodeURIComponent(success), 'success');
+          }
+    if (info) {
+              showToast(decodeURIComponent(info), 'info');
+          }
+
+          // Check for server-side script injection
+          const serverMessage = document.querySelector('script[type="text/javascript"]');
+          if (serverMessage && serverMessage.textContent.includes('toastr.error')) {
+              const messageMatch = serverMessage.textContent.match(/toastr\.error\('([^']+)'\)/);
+              if (messageMatch && messageMatch[1]) {
+                  showToast(messageMatch[1], 'error');
+              }
+          }
+      });
+  </script>
+
+  <!-- Delete handler -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			document.querySelectorAll(".btn-delete").forEach((button) => {
+			button.addEventListener("click", function () {
+				const form = this.closest("form");
+
+				Swal.fire({
+				title: 'Are you sure?',
+				text: "This action cannot be undone!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#d33',
+				cancelButtonColor: '#3085d6',
+				confirmButtonText: 'Yes, delete it!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					form.submit();
+				}
+				});
+			});
+			});
+		});
+	</script>
+
+  <script>
+    $(document).ready(function () {
+      let path = window.location.pathname;
+
+      // Loop through each sub-item link
+      $('.nav-collapse a').each(function () {
+        if (this.pathname === path) {
+          // Highlight the active sub-item
+          $(this).find('.sub-item').addClass('active');
+
+          // Expand the parent collapse menu
+          $(this).closest('.collapse').addClass('show');
+
+          // Highlight the main nav-item
+          $(this).closest('.nav-item').addClass('active');
+        }
+      });
+    });
+  </script>
+
+  <!-- table page length -->
+<!-- <script>
+  $(document).ready(function () {
+    initializeDataTableExport('#page-length');
+  });
+</script> -->
+
+  <!-- clean the response on the url after an update or a submit in a modal -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const url = new URL(window.location);
+      const paramsToClean = ['success', 'error', 'info', 'warning', 'modal'];
+
+      let hasChanged = false;
+
+      paramsToClean.forEach(param => {
+        if (url.searchParams.has(param)) {
+          url.searchParams.delete(param);
+          hasChanged = true;
+        }
+      });
+
+      if (hasChanged) {
+        // Replace URL without reloading
+        window.history.replaceState({}, document.title, url.pathname);
+        
+        // Close any open modals
+        const modals = document.querySelectorAll('.modal.show');
+        modals.forEach(modal => {
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        });
+      }
+    });
+  </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Clear modal-related URL parameters
+    const url = new URL(window.location);
+    if (url.searchParams.has('modal')) {
+      url.searchParams.delete('modal');
+      window.history.replaceState({}, '', url.toString());
+    }
+    
+    // Close any open modals
+    const modals = document.querySelectorAll('.modal.show');
+    modals.forEach(modal => {
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    });
+  });
+</script>
+
+
+ 
+</body>
+</html>

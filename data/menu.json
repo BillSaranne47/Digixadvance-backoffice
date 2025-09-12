@@ -1,0 +1,19 @@
+[
+ 
+  {
+    "label": "Client",
+    "icon": "fas fa-users",
+    "collapseId": "sidebarLayouts",
+    "subItems": [
+      { "label": "List", "link": "/clients/list" }
+    ]
+  },
+  {
+    "label": "Bank",
+    "icon": "fas fa-building",
+    "collapseId": "sidebarLayout",
+    "subItems": [
+      { "label": "List", "link": "/bank/list" }
+    ]
+  }
+]

@@ -1,0 +1,613 @@
+<div class="row">
+  <div class="mb-4">
+    <a href="/clients/list" class="btn p-0 border-0 bg-transparent text-primary text-decoration-none">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-left">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M5 12l14 0" />
+        <path d="M5 12l4 4" />
+        <path d="M5 12l4 -4" />
+      </svg>
+      <%= __('back_to_list') %>
+    </a>
+
+  </div>
+
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title"><%= __('client_information') %></h4>
+      </div>
+      <div class="card-body">
+
+        <% if (clientinfo && link.length> 0) { %>
+        <div class="d-flex flex-column gap-3">
+
+          <div class="d-flex align-items-center">
+
+            <strong class="me-2"><%= __('name') %>:</strong>
+            <span>
+              <%= clientinfo.name %>
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center">
+
+            <strong class="me-2"><%= __('phone') %>:</strong>
+            <span>
+              <%= clientinfo.msisdn %>
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center">
+
+            <strong class="me-2"><%= __('language') %>:</strong>
+            <span>
+              <%= clientinfo.language ? clientinfo.language.toUpperCase() : __('na') %>
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center">
+
+            <strong class="me-2"><%= __('scoring') %>:</strong>
+
+            <span>
+              <%= Number(link[0].scoring).toLocaleString('en-US') %> XAF
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center">
+
+            <strong class="me-2"><%= __('debt') %>:</strong>
+            <span>
+              <%= Number(link[0].debt).toLocaleString('en-US') %> XAF
+            </span>
+          </div>
+
+        </div>
+        <% } else { %>
+        <p class="text-muted"><%= __('no_client_info') %></p>
+        <% } %>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Quick action buttons -->
+  <div class="col-md-4">
+
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title"><%= __('quick_actions') %></h4>
+      </div>
+      <div class="card-body">
+
+        <div class="d-grid gap-2">
+          <button type="button" class="btn btn-light border btn-edit-scoring d-flex align-items-center justify-content-start gap-3 w-100 mb-2" data-client-id="<%= clientinfo.id %>" data-scoring="<%= link[0].scoring %>" data-bs-toggle="modal" data-bs-target="#editClientModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-user-edit">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+              <path d="M6 21v-2a4 4 0 0 1 4 -4h3.5" />
+              <path d="M18.42 15.61a2.1 2.1 0 0 1 2.97 2.97l-3.39 3.42h-3v-3l3.42 -3.39z" />
+            </svg>
+            <span><%= __('edit_scoring') %></span>
+          </button>
+
+          <button type="button" class="btn btn-light border d-flex align-items-center justify-content-start gap-3 w-100 mb-2" data-link-id="<%= link[0].id || link[0].link_id || link[0]._id %>" data-bs-toggle="modal" data-bs-target="#confirmDeleteClientLinkModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-unlink">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M17 22v-2" />
+              <path d="M9 15l6 -6" />
+              <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
+              <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />
+              <path d="M20 17h2" />
+              <path d="M2 7h2" />
+              <path d="M7 2v2" />
+            </svg>
+            <span><%= __('unlink_client') %></span>
+          </button>
+
+          <button type="button" class="btn btn-light btn-reset-debt border d-flex align-items-center justify-content-start gap-3 w-100" data-client-id="<%= clientinfo.id %>" data-bs-toggle="modal" data-bs-target="#confirmResetDebtModal" data-debt="<%= link[0].debt %>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-clear-all">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M8 6h12" />
+              <path d="M6 12h12" />
+              <path d="M4 18h12" />
+            </svg>
+            <span><%= __('clear_debt') %></span>
+          </button>
+
+          <button type="button" class="btn btn-light btn-reset-pin border d-flex align-items-center justify-content-start gap-3 w-100" data-client-id="<%= clientinfo.id %>" data-bs-toggle="modal" data-bs-target="#confirmResetPinModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-key">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-.301 -.301l-6.558 6.558a2 2 0 0 1 -1.239 .578l-.175 .008h-1.172a1 1 0 0 1 -.993 -.883l-.007 -.117v-1.172a2 2 0 0 1 .467 -1.284l.119 -.13l.414 -.414h2v-2h2v-2l2.144 -2.144l-.301 -.301a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0z" />
+              <path d="M15 9h.01" />
+            </svg>
+            <span><%= __('reset_pin') %></span>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Transaction table -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="">
+          <h4 class="card-title mb-3"><%= __('recent_transactions') %></h4>
+          <div class="btn border-info-subtle bg-info-subtle" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-exclamation-circle">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+              <path d="M12 9v4" />
+              <path d="M12 16v.01" />
+            </svg>
+            <strong><%= __('transaction_note') %></strong>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <div class="table-responsive">
+          <table id="page-length" class="display table dataTable">
+            <thead>
+              <tr>
+                <th class="table-plus">#</th>
+                <th><%= __('amount') %></th>
+                <th><%= __('status') %></th>
+                <th><%= __('created') %></th>
+                <% if (!user.bank_id) { %>
+                <th><%= __('action') %></th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (clients.length> 0) { %>
+              <% clients.forEach((client,index )=> { %>
+              <tr>
+                <td>
+                  <%= index + 1 %>
+                </td>
+
+
+                <td>
+                  <%= Number(client.amount).toLocaleString('en-US') %> XAF
+                </td>
+
+                <td>
+                  <% if (client.status==='PAID' ) { %>
+                  <span class="badge bg-success">PAID</span>
+                  <% } else if (client.status==='COMPLETED' ) { %>
+                  <span class="badge bg-primary">COMPLETED</span>
+                  <% } else if (client.status==='REFUND' ){ %>
+                  <span class="badge bg-info">REFUND</span>
+                  <% } else if (client.status==='REVERTED' ){ %>
+                  <span class="badge bg-warning">REVERTED</span>
+                  <% } else { %>
+                  <%= client.status %>
+                  <% } %>
+                </td>
+
+
+                <% let created_at='N/A' ; try { const d=new Date(client.created_at); const
+                      day=String(d.getDate()).padStart(2, '0' ); const weekday=d.toLocaleDateString('en-US', {
+                      weekday: 'short' }); const month=d.toLocaleDateString('en-US', { month: 'short' }); const
+                      year=d.getFullYear(); const hours=d.getHours().toString().padStart(2, '0' ); const
+                      minutes=d.getMinutes().toString().padStart(2, '0' ); created_at=`${weekday} ${day} ${month}
+                      ${year} ${hours}:${minutes}`; } catch (err) { created_at='Invalid Date' ; } %>
+                <td>
+                  <%= created_at %>
+                </td>
+                <% if (!user.bank_id) { %>
+                <td>
+                  <!-- Revert Overdraft Button -->
+                  <button type="button"
+                    class="btn btn-light btn-revert-overdraft border d-flex align-items-center justify-content-start gap-2"
+                    data-overdraft-id="<%= client.id %>"
+                    data-client-id="<%= clientinfo.id %>"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmRevertOverdraftModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-rotate-clockwise-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M21 12a9 9 0 1 0 -3.87 7.03" /><path d="M21 3v6h-6" /></svg>
+                    <span><%= __('revert_overdraft') %></span>
+                  </button>
+                </td>
+                <% } %>
+
+              </tr>
+              <% }); %>
+              <% } else { %>
+              <tr>
+                <td colspan="5" class="text-center text-muted"><%= __('no_transactions') %></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmation de reset debt -->
+<div class="modal fade" id="confirmResetDebtModal" tabindex="-1" aria-labelledby="confirmResetDebtLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="resetDebtForm" method="POST">
+      <input type="hidden" name="_method" value="DELETE">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmResetDebtLabel"><%= __('confirm_reset_debt') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <%= __('confirm_reset_debt_message') %>
+          <!-- Input for amount_paid -->
+          <div class="mb-3">
+            <label for="resetDebtAmount" class="form-label"><%= __('enter_debt_amount') %></label>
+            <input type="number" class="form-control" name="amount_paid" id="resetDebtAmount" required />
+            <small class="text-muted" id="currentDebtIndicator"></small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning" id="resetDebtBtn">
+            <span id="resetDebtBtnText"><%= __('yes') %>, <%= __('clear_debt') %></span>
+            <span id="resetDebtBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= __('cancel') %></button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Unlink Client to bank Modal -->
+<div class="modal fade" id="confirmDeleteClientLinkModal" tabindex="-1" aria-labelledby="confirmDeleteClientLinkLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="deleteClientLinkForm" method="POST">
+      <input type="hidden" name="_method" value="DELETE">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteClientLinkLabel"><%= __('confirm_delete_link') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <%= __('confirm_delete_link_message') %>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger"><%= __('yes') %>, <%= __('delete') %></button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= __('cancel') %></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Reset PIN Modal -->
+<div class="modal fade" id="confirmResetPinModal" tabindex="-1" aria-labelledby="confirmResetPinLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="resetPinForm" method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmResetPinLabel"><%= __('confirm_reset_pin') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <%= __('confirm_reset_pin_message') %>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning"><%= __('yes') %>, <%= __('reset_pin') %></button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= __('cancel') %></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- update scoring Modal -->
+<div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="editClientForm" method="post" action="/clients/updateClientInfo">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editClientLabel"><%= __('edit_scoring_title') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="client_id" name="client_id" />
+          <input type="hidden" id="link_id" name="linkId" />
+          <div class="form-group">
+            <label for="scoring"><%= __('scoring') %></label>
+            <input type="number" class="form-control" id="scoring" name="scoring" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" id="updateBtn">
+            <span id="updateBtnText"><%= __('update') %></span>
+            <span id="updateBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><%= __('cancel') %></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Revert Overdraft Modal -->
+<div class="modal fade" id="confirmRevertOverdraftModal" tabindex="-1" aria-labelledby="confirmRevertOverdraftLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="revertOverdraftForm" method="POST" novalidate>
+      <input type="hidden" name="clientId" id="revertClientId">
+      <input type="hidden" name="overdraftId" id="revertOverdraftId">
+
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmRevertOverdraftLabel"><%= __('revert_overdraft') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p><%= __('confirm_revert_overdraft_message') %></p>
+
+          <div class="mb-3">
+            <label for="revertReason" class="form-label"><%= __('reason') %></label>
+            <textarea class="form-control" id="revertReason" name="reason" rows="3" ></textarea>
+            
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning" id="revertOverdraftBtn">
+            <span id="revertOverdraftBtnText"><%= __('yes') %>, <%= __('revert_overdraft') %></span>
+            <span id="revertOverdraftBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= __('cancel') %></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- delete client bank link -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const deleteForm = document.getElementById('deleteClientLinkForm');
+    const deleteModal = document.getElementById('confirmDeleteClientLinkModal');
+
+    if (!deleteForm || !deleteModal) return;
+
+    // When the modal is shown, Bootstrap provides event.relatedTarget (the button that opened it)
+    deleteModal.addEventListener('show.bs.modal', function(event) {
+      const triggerButton = event.relatedTarget; // Button that triggered the modal
+      if (!triggerButton) return;
+
+      // Prefer data-link-id attribute
+      const linkId = triggerButton.getAttribute('data-link-id');
+
+      if (!linkId) {
+        // Safety: clear action so form doesn't submit to wrong place
+        deleteForm.removeAttribute('action');
+        console.warn('confirmDeleteClientLinkModal opened without data-link-id on triggering button.');
+        return;
+      }
+
+      // Set the form action to the route your router expects:
+      deleteForm.setAttribute('action', `/clients/${encodeURIComponent(linkId)}/deleteClientBankLink`);
+      // Ensure method is POST (router currently listens for POST)
+      deleteForm.setAttribute('method', 'POST');
+      // If you use method-override and expect DELETE on server, keep _method hidden input in form
+      // Otherwise remove/ignore _method.
+    });
+  });
+</script>
+
+<!-- reset debt -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const resetButtons = document.querySelectorAll('.btn-reset-debt');
+    const resetForm = document.getElementById('resetDebtForm');
+    const debtInput = document.getElementById('resetDebtAmount');
+    const debtIndicator = document.getElementById('currentDebtIndicator');
+
+    resetButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const clientId = button.dataset.clientId;
+        const debt = button.dataset.debt;
+
+        // Set form action
+        resetForm.setAttribute('action', `/clients/${clientId}/resetDebt`);
+
+        // Set debt input to current debt as default
+        if (debtInput) debtInput.value = debt;
+
+        // Show indicator
+        if (debtIndicator) debtIndicator.textContent = `${__('current_debt')}: ${Number(debt).toLocaleString('en-US')} XAF`;
+      });
+    });
+  });
+</script>
+
+<!-- reset pin -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const resetPinButtons = document.querySelectorAll('.btn-reset-pin');
+    const resetPinForm = document.getElementById('resetPinForm');
+
+    resetPinButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const clientId = button.dataset.clientId;
+        resetPinForm.setAttribute('action', `/clients/${clientId}/resetPinCode`);
+      });
+    });
+  });
+</script>
+
+<!-- spinner -->
+<script>
+  document.getElementById('editClientForm').addEventListener('submit', function(e) {
+    const updateBtn = document.getElementById('updateBtn');
+    const btnText = document.getElementById('updateBtnText');
+    const btnSpinner = document.getElementById('updateBtnSpinner');
+
+    // Active le loader
+    updateBtn.disabled = true;
+    btnText.textContent = 'Updating...';
+    btnSpinner.classList.remove('d-none');
+  });
+</script>
+
+<!-- update scoring -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const editButtons = document.querySelectorAll('.btn-edit-scoring');
+    const clientIdField = document.getElementById('client_id');
+
+    editButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const clientId = button.dataset.clientId;
+        const scoring = button.dataset.scoring;
+        clientIdField.value = clientId;
+        document.getElementById('scoring').value = scoring;
+      });
+    });
+  });
+</script>
+
+<script>
+  window.addEventListener('pageshow', function(event) {
+    if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+      // Hide modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('editClientModal'));
+      if (modal) {
+        modal.hide();
+      }
+
+      // Reset the form fields
+      document.getElementById('editClientForm')?.reset();
+
+      // Reset submit button state
+      const updateBtn = document.getElementById('updateBtn');
+      const btnText = document.getElementById('updateBtnText');
+      const btnSpinner = document.getElementById('updateBtnSpinner');
+      if (updateBtn && btnText && btnSpinner) {
+        updateBtn.disabled = false;
+        btnText.textContent = 'Update...';
+        btnSpinner.classList.add('d-none');
+      }
+    }
+  });
+</script>
+<script>
+  const editModal = document.getElementById('editClientModal');
+  editModal?.addEventListener('hidden.bs.modal', function() {
+    const form = document.getElementById('editClientForm');
+    form?.reset();
+
+    // Reset the submit button
+    const updateBtn = document.getElementById('updateBtn');
+    const btnText = document.getElementById('updateBtnText');
+    const btnSpinner = document.getElementById('updateBtnSpinner');
+    if (updateBtn && btnText && btnSpinner) {
+      updateBtn.disabled = false;
+      btnText.textContent = 'Update';
+      btnSpinner.classList.add('d-none');
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const resetDebtForm = document.getElementById('resetDebtForm');
+    const resetDebtBtn = document.getElementById('resetDebtBtn');
+    const resetDebtBtnText = document.getElementById('resetDebtBtnText');
+    const resetDebtBtnSpinner = document.getElementById('resetDebtBtnSpinner');
+
+    if (resetDebtForm) {
+      resetDebtForm.addEventListener('submit', function() {
+        if (resetDebtBtn && resetDebtBtnText && resetDebtBtnSpinner) {
+          // Disable the button
+          resetDebtBtn.disabled = true;
+
+          // Show spinner and change text
+          resetDebtBtnText.textContent = 'Processing...';
+          resetDebtBtnSpinner.classList.remove('d-none');
+        }
+      });
+    }
+  });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const modalEl = document.getElementById('confirmRevertOverdraftModal');
+  const form = document.getElementById('revertOverdraftForm');
+  const clientInput = document.getElementById('revertClientId');
+  const overdraftInput = document.getElementById('revertOverdraftId');
+  const reasonInput = document.getElementById('revertReason');
+  const btn = document.getElementById('revertOverdraftBtn');
+  const btnText = document.getElementById('revertOverdraftBtnText');
+  const btnSpinner = document.getElementById('revertOverdraftBtnSpinner');
+
+  if (!modalEl || !form) return;
+
+  // When Bootstrap shows the modal, event.relatedTarget is the trigger button
+  modalEl.addEventListener('show.bs.modal', (event) => {
+    const trigger = event.relatedTarget;
+    if (!trigger) return;
+
+    const overdraftId = trigger.getAttribute('data-overdraft-id') || trigger.dataset.overdraftId;
+    const clientId = trigger.getAttribute('data-client-id') || trigger.dataset.clientId;
+
+    // Safety check
+    if (!overdraftId || !clientId) {
+      console.warn('Revert modal opened without overdraftId or clientId', { overdraftId, clientId });
+      // prevent submit by clearing action and disabling submit
+      form.removeAttribute('action');
+      btn.disabled = true;
+      return;
+    }
+
+    // set hidden inputs
+    overdraftInput.value = overdraftId;
+    clientInput.value = clientId;
+
+    // set form action (POST /clients/:overdraftId/revertOverdraft?clientId=:clientId)
+    form.action = `/clients/${encodeURIComponent(overdraftId)}/revertOverdraft?clientId=${encodeURIComponent(clientId)}`;
+
+    // Reset UI fields
+    // reasonInput.value = '';
+    // reasonInput.classList.remove('is-invalid');
+    btn.disabled = false;
+    btnText.textContent = '<%= __("yes") %>, <%= __("revert_overdraft") %>';
+    btnSpinner.classList.add('d-none');
+  });
+
+  // Reset when hidden
+  modalEl.addEventListener('hidden.bs.modal', () => {
+    form.reset();
+    btn.disabled = false;
+    btnText.textContent = '<%= __("yes") %>, <%= __("revert_overdraft") %>';
+    btnSpinner.classList.add('d-none');
+  });
+
+  // Submit handler — show spinner and basic client-side validation
+  form.addEventListener('submit', (e) => {
+    // basic validation
+   
+
+    // disable & show spinner
+    btn.disabled = true;
+    btnText.textContent = '<%= __("processing") || "Processing..." %>';
+    btnSpinner.classList.remove('d-none');
+    // allow normal form submission (server-side will redirect)
+  });
+});
+</script>
+

@@ -1,0 +1,95 @@
+<!-- Navbar Header -->
+<nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+    <div class="container-fluid">
+
+        <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+            <!-- Language Dropdown -->
+            <li class="nav-item dropdown hidden-caret">
+                <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-globe"></i>
+                    <span class="d-none d-md-inline"><%= locale.toUpperCase() %></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                    <li>
+                        <a class="dropdown-item <%= locale === 'en' ? 'active' : '' %>" href="/change-language/en">
+                            <span class="me-2">EN</span> English
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item <%= locale === 'fr' ? 'active' : '' %>" href="/change-language/fr">
+                            <span class="me-2">FR</span> Français
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item topbar-icon dropdown hidden-caret">
+                <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="far fa-bell"></i>
+                    
+                </a>
+
+
+            </li>
+
+            <li class="nav-item topbar-user dropdown hidden-caret">
+                <button class="dropdown-toggle profile-pic border-0 bg-transparent hover" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center fw-bold text-info fs-5"
+                    style="width: 36px; height: 36px; background-color: lightcyan;">
+                    <%= user.username ? user.username.charAt(0).toUpperCase() : '' %>
+                </div>
+
+
+                    <!-- <span class="profile-username">
+                        <span class="op-7">Hi,</span>
+                        <span class="fw-bold">
+                            <%= user.username %>
+                        </span>
+                    </span> -->
+                </button>
+
+                <ul class="dropdown-menu dropdown-user animated fadeIn">
+                    <div class="dropdown-user-scroll scrollbar-outer ">
+                        <li class="">
+                            <div class="card-body ps-3 fw-medium" style="font-size: 12px;">
+                                <%= user.username %> <br> <span class="fw-light"><%= user.email %></span> 
+                                
+                            </div>
+                            <div class="dropdown-divider border-light-subtle"></div>
+                            <a class="dropdown-item" href="/users/profile">
+                                <!-- Profile icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-user">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                </svg>
+                                Account
+                            </a>
+
+                            <div class="dropdown-divider border-light-subtle"></div>
+
+                            <a class="dropdown-item text-danger" href="/logout">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-logout">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+                                    <path d="M9 12h12l-3 -3" />
+                                    <path d="M18 15l3 -3" />
+                                </svg>
+                                Logout
+                            </a>
+                        </li>
+                    </div>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+<!-- End Navbar -->

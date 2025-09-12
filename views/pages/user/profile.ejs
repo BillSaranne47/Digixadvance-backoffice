@@ -1,0 +1,146 @@
+<div class="">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title"><%= __('Account Page') %></h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-5 col-md-2">
+                    <div class="nav flex-column nav-pills nav-secondary nav-pills-no-bd nav-pills-icons"
+                        id="v-pills-tab-with-icon" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link active" id="v-pills-home-tab-icons" data-bs-toggle="pill"
+                            href="#profileInfo-tab" role="tab" aria-controls="profileInfo-tab"
+                            aria-selected="true">
+                            <i class="fas fa-user"></i>
+                            <%= __('Information') %>
+                        </a>
+                        <a class="nav-link" id="v-pills-profile-tab-icons" data-bs-toggle="pill"
+                            href="#updateProfile-tab" role="tab" aria-controls="updateProfile-tab"
+                            aria-selected="false">
+                            <i class="fas fa-user-edit"></i>
+                            <%= __('Update Profile') %>
+                        </a>
+                        <a class="nav-link" id="v-pills-2FA-tab-icons" data-bs-toggle="pill"
+                            href="#2FA-tab" role="tab" aria-controls="2FA-tab"
+                            aria-selected="false">
+                            <i class="fas fa-key"></i>
+                            <%= __('2FA') %>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-7 col-md-10">
+                    <div class="tab-content" id="v-pills-with-icon-tabContent">
+
+                        <!-- profile info tab -->
+                        <div class="tab-pane fade show active" id="profileInfo-tab" role="tabpanel"
+                            aria-labelledby="v-pills-home-tab-icons">
+                            <div class="profile card shadow-sm border-0 p-4 rounded">
+                               
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-3 d-flex align-items-center">
+                                        <span class="fw-bold me-2" style="width: 100px;"><%= __('Username') %>:</span>
+                                        <span><%= user.username %></span>
+                                    </li>
+                                    <li class="mb-3 d-flex align-items-center">
+                                        <span class="fw-bold me-2" style="width: 100px;"><%= __('Email') %>:</span>
+                                        <span><%= user.email %></span>
+                                    </li>
+                                    
+
+                                </ul>
+                            </div>
+                            
+                        </div>
+
+                        <!-- update profile tab -->
+                        <div class="tab-pane fade" id="updateProfile-tab" role="tabpanel"
+                            aria-labelledby="v-pills-profile-tab-icons">
+                            <div class="profile card shadow-sm border-0 p-4 rounded">
+                                <form action="/users/<%= user.id %>/updateProfile" method="post">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="username"><%= __('Username') %></label>
+                                            <input type="text" class="form-control" id="username" name="username"
+                                                placeholder="<%= __('Enter a username') %>" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email"><%= __('Email') %></label>
+                                            <input type="text" class="form-control" id="email" name="email"
+                                                placeholder="<%= __('Enter an email') %>" />
+                                        </div>
+                                            
+                                    </div>
+                                    <div class="card-action">
+                                        <button type="submit" class="btn btn-primary"><%= __('Submit') %></button>
+                                        <a href="/dashboard" class="btn btn-danger"><%= __('Cancel') %></a>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                        </div>
+
+                        <!-- privacy and security tab -->
+                        <div class="tab-pane fade" id="2FA-tab" role="tabpanel"
+                                    aria-labelledby="v-pills-2FA-tab-icons">
+                            <div class="profile card shadow-sm border-0 p-4 rounded">
+                                <% if (typeof user.twofaEnabled !== 'undefined') { %>
+                                    <% if (!user.twofaEnabled) { %>
+                                        <h5>Two-Factor Authentication</h5>
+                                        <p>Add an extra layer of security to your account.</p>
+                                        <a href="/twofa/setup" class="btn btn-primary">Enable 2FA</a>
+                                    <% } else { %>
+                                        <h5>Two-Factor Authentication</h5>
+                                        <p>Two-factor authentication is enabled.</p>
+                                        <form action="/twofa/disable" method="POST">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button type="submit" class="btn btn-danger">Disable 2FA</button>
+                                        </form>
+                                    <% } %>
+                                <% } else { %>
+                                    <p>Loading 2FA status...</p>
+                                <% } %>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add this script to your page
+document.addEventListener('DOMContentLoaded', function() {
+    const twofaTab = document.getElementById('2FA-tab');
+    
+    if (twofaTab) {
+        fetch('/twofa/status')
+            .then(response => response.json())
+            .then(data => {
+                // Update UI based on response
+                const container = twofaTab.querySelector('.profile');
+                if (data.twofaEnabled) {
+                    container.innerHTML = `
+                        <h5>Two-Factor Authentication</h5>
+                        <p>✅ Two-factor authentication is enabled.</p>
+                        <form action="/twofa/disable" method="POST">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger">Disable 2FA</button>
+                        </form>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <h5>Two-Factor Authentication</h5>
+                        <p>Add an extra layer of security to your account.</p>
+                        <a href="/twofa/setup" class="btn btn-primary">Enable 2FA</a>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error checking 2FA status:', error);
+            });
+    }
+});
+</script>

@@ -1,0 +1,159 @@
+<div class="sidebar" data-background-color="dark">
+  <div class="sidebar-logo ">
+    <!-- Logo Header -->
+    <div class="logo-header" data-background-color="dark">
+    <a href="/dashboard" class="logo align-items-center">
+    
+   
+    <h4 class="text-white mb-0">DigiXavance</h4>
+  </a>
+  
+  <div class="nav-toggle">
+    <button class="btn btn-toggle sidenav-toggler">
+      <i class="gg-menu-left"></i>
+    </button>
+  </div>
+  <button class="topbar-toggler more">
+    <i class="gg-more-vertical-alt"></i>
+  </button>
+</div>
+
+    <!-- End Logo Header -->
+  </div>
+  
+  <div class="sidebar-wrapper  scrollbar-inner d-flex flex-column h-100">
+    <div class="sidebar-content flex-grow-1">
+      <ul class="nav nav-secondary">
+        <!-- <% if (usermenu && usermenu.length> 0) { %>
+          <% usermenu.forEach(item=> { %>
+            <% if (item.label !=='Add user' ) { %>
+              <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#<%= item.collapseId %>">
+                  <i class="<%= item.icon %>"></i>
+                  <p>
+                    <%= item.label %>
+                  </p>
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse" id="<%= item.collapseId %>">
+                  <ul class="nav nav-collapse">
+                    <% item.subItems.forEach(sub=> { %>
+                      <li>
+                        <a href="<%= sub.link %>">
+                          <span class="sub-item">
+                            <%= sub.label %>
+                          </span>
+                        </a>
+                      </li>
+                      <% }); %>
+                  </ul>
+                </div>
+              </li>
+              <% } %>
+            <% }); %>
+          <% } else { %>
+        
+          
+         
+          
+        <% } %> -->
+        
+        <% if (!user.bank_id) { %>
+          <!-- digitalis admin view-->
+          <li class="nav-item nav nav-collapse">
+            <a href="/dashboard">
+              <i class="fas fa-home"></i>
+              <p><%= __('dashboard') %></p>
+            </a>
+          </li>
+          <li class="nav-item nav nav-collapse">
+            <a href="/users/list">
+              <i class="fas fa-user-shield"></i>
+               <p><%= __('users') %></p>
+            </a>
+          </li>
+          <li class="nav-item nav nav-collapse">
+            <a href="/clients/list">
+              <i class="fas fa-user-friends"></i>
+              <p><%= __('clients') %></p>
+            </a>
+            
+          </li>
+          <li class="nav-item nav nav-collapse">
+            <a href="/banks/list">
+              <i class="fas fa-building"></i>
+              <p><%= __('banks') %></p>
+            </a>
+            
+          </li>
+          <li class="nav-item nav nav-collapse">
+            <a href="/funds/list">
+              <i class="fas fa-wallet"></i>
+              <p><%= __('fund') %></p>
+            </a>
+          </li>
+          
+        <% } else { %>
+          <!-- banks view-->
+           <li class="nav-item nav nav-collapse">
+            <a href="/dashboard">
+              <i class="fas fa-home"></i>
+              <p><%= __('dashboard') %></p>
+            </a>
+          </li>
+          <li class="nav-item nav nav-collapse">
+            <a href="/clients/list">
+              <i class="fas fa-user-friends"></i>
+              <p><%= __('clients') %></p>
+            </a>
+            
+          </li>
+          <li class="nav-item nav nav-collapse">
+            <a href="/funds/list">
+              <i class="fas fa-wallet"></i>
+              <p><%= __('fund') %></p>
+            </a>
+          </li>
+          
+
+        <% } %>
+        
+      </ul>
+
+      
+
+      
+    </div>
+    
+    <!-- Bottom user card & logout -->
+    <div class="px-3 pb-5">
+      <div class="card bg-light bg-opacity-10 text-white border-0">
+        <div class="card-body m-1 py-2 px-3 fw-semibold" style="font-size: 12px;">
+          <%= user.username %> <br>
+          <span class="mb-0 fw-light"><%= user.email %></span> <br>
+          Domain : <% if (bankName) { %>
+              <span class="mb-0 fw-light"><%= bankName %></span>
+             <% } %> 
+        </div>
+      </div>
+      <a href="/logout" class="">
+        <button type="submit" class="btn btn-outline-danger w-100 text-start d-flex align-items-center gap-3 mb-5 mt--3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-logout">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+            <path d="M9 12h12l-3 -3" />
+            <path d="M18 15l3 -3" />
+          </svg>
+          <%= __('logout') %> 
+        </button>
+      </a>
+
+      
+    </div>
+      
+  </div>
+</div>
+

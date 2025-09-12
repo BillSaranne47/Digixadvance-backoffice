@@ -1,0 +1,63 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Create a new user</div>
+            </div>
+            <form action="/users/save" method="post">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="username" placeholder="Enter a name" />
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="example@ex.com" />
+                            </div>
+                            <div class="form-group">
+                                <label for="msisdn">Phone Number </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">+237</span>
+                                    <input type="tel" class="form-control" id="tel" name="msisdn" placeholder="6xxxxxxx" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="role">Select a Role</label>
+                                <select class="form-control" id="role" name="role" required>
+                                    <option value="">-- Choose a Role --</option>
+                                    <% roles.forEach(role => { %>
+                                        <option value="<%= role.name %>"><%= role.name %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_id">Select Bank</label>
+                                <select class="form-control" id="bank_id" name="bank_id" required>
+                                    <option value="">-- Choose a Bank --</option>
+                                    <% banks.forEach(bank => { %>
+                                        <option value="<%= bank.id %>"><%= bank.name %> (<%= bank.code %>)</option>
+                                    <% }); %>
+                                </select>
+                            </div>
+
+                        
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="******" />
+                            </div>
+                        
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="card-action">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/users/list" class="btn btn-danger">Cancel</a>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>

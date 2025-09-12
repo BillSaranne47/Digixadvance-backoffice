@@ -1,0 +1,125 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <h4 class="card-title"><%= __('Bank List') %></h4>
+                    <a class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#createBankModal">
+                        <i class="fa fa-plus"></i>
+                        <%= __('Add Bank') %>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="page-length" class="display table dataTable">
+                        <thead>
+                            <tr>
+                                <th class="table-plus">#</th>
+                                <th><%= __('Name') %></th>
+                                <th><%= __('Code') %></th>
+                                <th><%= __('Interest Rate') %></th>
+                                <th class="no-export"><%= __('Action') %></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (banks.length> 0) { %> 
+                              <% banks.forEach((bank,index )=> { %>
+                                <tr>
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+                                    <td>
+                                        <%= bank.name %>
+                                    </td>
+                                    <td>
+                                        <%= bank.code %>
+                                    </td>
+                                    <td>
+                                        <%= bank.BankConfig.interest_rate %>
+                                    </td>
+                                    <td>
+                                        <div class="form-button-action">
+                                            <a href="/banks/<%= bank.id %>/bankInfo"
+                                                class="btn border-primary-subtle">
+                                                <%= __('view') %>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="5" class="text-center text-muted"><%= __('No Banks found.') %></td>
+                      </tr>
+                      <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Bank Modal -->
+<div class="modal fade" id="createBankModal" tabindex="-1" aria-labelledby="createBankModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="createBankForm" action="/banks/save" method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createBankModalLabel"><%= __('Create Bank') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row">
+            
+              <div class="form-group">
+                <label for="name"><%= __('Name') %></label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="<%= __('Enter a name') %>" required />
+              </div>
+
+              <div class="form-group">
+                <label for="interest_rate"><%= __('Short Bank Name') %></label>
+                <input type="text" class="form-control" name="short_name" placeholder="Abbreviation of bank full name" required />
+              </div>
+
+              <div class="form-group">
+                <label for="code"><%= __('Code') %></label>
+                <input type="text" class="form-control" id="code" name="code" placeholder="<%= __('bankName + code') %>" required />
+              </div>
+
+              <div class="form-group">
+                <label for="interest_rate"><%= __('Interest Rate') %></label>
+                <input type="text" class="form-control" name="interest_rate" placeholder="Ex: 0.00" required />
+              </div>
+            
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><%= __('Cancel') %></button>
+          <button type="submit" class="btn btn-primary" id="createBankSubmitBtn">
+            <span id="submitBtnText"><%= __('Submit') %></span>
+            <span id="submitBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('createBankForm');
+    const submitBtn = document.getElementById('createBankSubmitBtn');
+    const submitText = document.getElementById('submitBtnText');
+    const submitSpinner = document.getElementById('submitBtnSpinner');
+
+    form.addEventListener('submit', function () {
+      submitBtn.disabled = true;
+      submitText.textContent = '<%= __("Submitting...") %>';
+      submitSpinner.classList.remove('d-none');
+    });
+  });
+</script>

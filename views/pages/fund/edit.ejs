@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Edit bank</div>
+            </div>
+            <form action="/funds/<%= fund.id %>/update" method="post">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter a name" />
+                            </div>
+                            <div class="form-group">
+                                <label for="number">Code</label>
+                                <input type="text" class="form-control" id="number" name="code" placeholder="bankName + code" />
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="card-action">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a class="btn btn-danger" href="/bank/list">Cancel</a>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>

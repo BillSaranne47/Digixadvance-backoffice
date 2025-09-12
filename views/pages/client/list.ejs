@@ -1,0 +1,508 @@
+<div class="row">
+  <div class="col-md-12">
+
+    <div class="card">
+
+      <div class="card-header">
+
+        <div class="d-flex align-items-center">
+          <h4 class="card-title"><%= __('client_list') %></h4>
+
+          <% if (user.bank_id) { %>
+          <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#addClientModal">
+              <i class="fas fa-user-plus me-1"></i>
+              <%= __('add_client') %>
+            </button>
+
+            <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#importClientModal">
+              <i class="fas fa-upload me-1"></i>
+              <%= __('import_clients') %>
+            </button>
+          </div>
+          <% } %>
+
+        </div>
+      </div>
+      <div class="card-body">
+
+        <div class="table-responsive">
+          <table id="page-length" class="display table dataTable ">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th><%= __('name') %></th>
+                <th><%= __('phone_number') %></th>
+                <th><%= __('subscription') %></th>
+                <th class="no-export"><%= __('action') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (clients.length> 0) { %>
+              <% clients.forEach((client, index)=> { %>
+              <tr>
+                <td>
+                  <%= index + 1 %>
+                </td>
+                <td>
+                  <%= client.name %>
+                </td>
+                <td>
+                  <%= client.msisdn %>
+                </td>
+                <td>
+                  <% if (client.subscription) { %>
+                  <% if (client.subscription.status==='ACTIVE' ) { %>
+                  <span class="badge bg-success">ACTIVE</span>
+                  <% } else if (client.subscription.status==='FAILED' ) { %>
+                  <span class="badge bg-danger">FAILED</span>
+                  <% } else { %>
+                  <span class="badge bg-secondary">
+                    <%= client.subscription.status %>
+                  </span>
+                  <% } %>
+                  <% } else { %>
+                  <span class="badge bg-warning text-dark"><%= __('no_subscription') %></span>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="form-button-action">
+                    <a href="/clients/<%= client.id %>/listInfo" class="btn border-info-subtle"><%= __('view') %></a>
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+              <% } else { %>
+              <tr>
+                <td colspan="5" class="text-center text-muted"><%= __('no_clients') %></td>
+              </tr>
+              <% } %>
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Import Clients Modal -->
+<div class="modal fade" id="importClientModal" tabindex="-1" aria-labelledby="importClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="importClientForm" enctype="multipart/form-data">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="importClientModalLabel"><%= __('import_clients_title') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="file" class="form-label"><%= __('choose_file') %></label>
+            <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <span id="submitBtnText"><%= __('submit') %></span>
+            <span id="submitBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-secondary d-none" id="continueImportBtn">
+            <%= __('continue_mapping') %>
+          </button>
+
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><%= __('cancel') %></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Import Clients Modal scipt -->
+<!-- <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const importForm = document.getElementById('importClientForm');
+
+    importForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(importForm);
+
+      try {
+        const response = await fetch('/clients/importclients', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          window.location.reload(); // recharge la page
+        } else {
+          const error = await response.text();
+          console.error('Erreur import:', error);
+          alert('Erreur lors de l’importation des clients.');
+        }
+      } catch (err) {
+        console.error('Erreur réseau:', err);
+        alert('Erreur de connexion au serveur.');
+      }
+    });
+  });
+</script> -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const importForm = document.getElementById('importClientForm');
+    const mappingFields = document.getElementById('mappingFields');
+    const continueBtn = document.getElementById('continueImportBtn'); // bouton "Continuer"
+
+    importForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(importForm);
+      const submitBtnText = document.getElementById('submitBtnText');
+      const submitBtnSpinner = document.getElementById('submitBtnSpinner');
+
+      submitBtnText.classList.add('d-none');
+      submitBtnSpinner.classList.remove('d-none');
+
+      let success = false;
+
+      try {
+        const response = await fetch('/clients/importclients', {
+          method: 'POST',
+          body: formData
+        });
+
+        let result;
+        try {
+          result = await response.json();
+        } catch (parseError) {
+          console.error('❌ Réponse non JSON :', await response.text());
+          throw new Error('La réponse du serveur est invalide (non JSON)');
+        }
+
+        if (result.success) {
+          success = true;
+          document.getElementById('fileTransactionId').value = result.file_transaction_id;
+
+          const importModal = bootstrap.Modal.getInstance(document.getElementById('importClientModal'));
+          importModal.hide();
+
+          // Afficher les selects dans le modal de mapping
+          const headers = result.headers;
+          const systemFields = ['name', 'msisdn', 'scoring'];
+          mappingFields.innerHTML = '';
+          systemFields.forEach((field, index) => {
+            const selectHTML = `
+            <div class="mb-3">
+              <label for="field-${index}" class="form-label fw-bold fs-6">${field}</label>
+              <select class="form-select" name="mapping[${field}]" required>
+                <option value="">-- Select an item that match with your csv item --</option>
+                ${headers.map(header => `<option value="${header}">${header}</option>`).join('')}
+              </select>
+            </div>`;
+            mappingFields.insertAdjacentHTML('beforeend', selectHTML);
+          });
+
+          // Afficher le bouton continuer
+          continueBtn.classList.remove('d-none');
+
+          // Ouvrir le modal de mapping
+          const mappingModal = new bootstrap.Modal(document.getElementById('mappingModal'));
+          mappingModal.show();
+        } else {
+          alert('Erreur lors de l’importation des clients.');
+        }
+
+      } catch (err) {
+        console.error('Erreur réseau:', err);
+        alert('Erreur de connexion au serveur.');
+      } finally {
+        if (!success) {
+          submitBtnText.classList.remove('d-none');
+          submitBtnSpinner.classList.add('d-none');
+        }
+      }
+    });
+
+    // Gérer le bouton "Continuer"
+    continueBtn.addEventListener('click', () => {
+      const mappingModal = new bootstrap.Modal(document.getElementById('mappingModal'));
+      mappingModal.show();
+    });
+  });
+</script>
+
+
+
+<!-- Mapping Modal -->
+<div class="modal fade" id="mappingModal" tabindex="-1" aria-labelledby="mappingModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="mappingForm">
+      <input type="hidden" id="fileTransactionId" name="file_transaction_id" />
+
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <div class="mb-3">
+            <p class="text-muted mb-1">
+              <%= __('mapping_instructions_1') %>
+            </p>
+            <p class="text-muted">
+              <%= __('mapping_instructions_2') %>
+            </p>
+          </div>
+          <button type="button" class="btn-close position-absolute top-0 end-0 mt-3 me-3" data-bs-dismiss="modal" aria-label="<%= __('close') %>"></button>
+        </div>
+        <div class="modal-body" id="mappingFields">
+
+          <!-- Les champs select seront ajoutés dynamiquement ici -->
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" id="importBtn">
+            <span id="importBtnText"><%= __('import_data') %></span>
+            <span id="importBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- mapping modal script -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const mappingForm = document.getElementById('mappingForm');
+    const fileTransactionIdInput = document.getElementById('fileTransactionId');
+
+    if (!mappingForm) {
+      console.error('❌ mappingForm introuvable dans le DOM');
+      return;
+    }
+
+    mappingForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fileTransactionId = fileTransactionIdInput.value;
+      const formData = new FormData(mappingForm);
+      const mapping = {};
+
+      for (let [key, value] of formData.entries()) {
+        if (key.startsWith('mapping[')) {
+          const fieldName = key.match(/mapping\[(.*)\]/)[1];
+          mapping[fieldName] = value; // ✅ correction ici
+        }
+      }
+
+      console.log('📤 Données envoyées:', {
+        file_transaction_id: fileTransactionId,
+        mapping
+      });
+
+      try {
+        const response = await fetch('/clients/importClientsFinal', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            file_transaction_id: fileTransactionId,
+            mapping
+          })
+        });
+
+        if (response.ok) {
+
+          Swal.fire({
+            icon: 'success',
+            title: '<%= __("success") %>',
+            text: '<%= __("client_successfully_added") %>',
+            confirmButtonText: '<%= __("ok") %>'
+          }).then(() => {
+            window.location.href = "/clients/list";
+          });
+        } else {
+          const errText = await response.text();
+          Swal.fire({
+            icon: 'error',
+            title: '<%= __("error") %>',
+            text: '<%= __("import_error") %>: ' + errText
+          });
+        }
+      } catch (error) {
+        console.error('❌ Erreur de connexion:', error);
+        alert('Erreur réseau.');
+      }
+    });
+  });
+</script>
+
+
+<!-- Add Client Modal -->
+<div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="addClientForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addClientModalLabel"><%= __('add_new_client') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group mb-3">
+            <label for="name"><%= __('client_name') %></label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="<%= __('Name') %>" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="tel"><%= __('phone_number') %></label>
+            <div class="input-group">
+              <span class="input-group-text">+237</span>
+              <input type="tel" class="form-control" id="tel" name="msisdn" placeholder="<%= __('Phone Number') %>" pattern="^\d{9}$" title="The phone number must be 9 digits" maxlength="9" required>
+            </div>
+          </div>
+
+
+          <div class="form-group mb-3">
+            <label for="scoring"><%= __('scoring') %></label>
+            <input type="number" class="form-control" id="scoring" placeholder="Scoring" name="scoring" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="selectLanguage"><%= __('select_language') %></label>
+            <select class="form-select" id="selectLanguage" name="language" required>
+              <option value="fr"><%= __('french') %></option>
+              <option value="en"><%= __('english') %></option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" id="sendBtn">
+            <span id="sendBtnText"><%= __('submit') %></span>
+            <span id="sendBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><%= __('cancel') %></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Client Modal script-->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('addClientForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = form.name.value.trim();
+      const msisdn = form.msisdn.value.trim();
+      const scoring = form.scoring.value.trim();
+      const language = form.language.value;
+
+
+      const formData = new URLSearchParams();
+      formData.append('name', name);
+      formData.append('msisdn', msisdn);
+      formData.append('scoring', scoring);
+      formData.append('language', language);
+
+      try {
+        const response = await fetch('/clients/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData.toString()
+        });
+
+        if (response.redirected) {
+          window.location.href = response.url; // will refresh to /clients/list
+        } else {
+          window.location.reload(); // fallback
+        }
+      } catch (err) {
+        alert('Erreur lors de l’ajout du client');
+        console.error(err);
+      }
+    });
+  });
+</script>
+
+<!-- spinner -->
+<script>
+  document.getElementById('addClientForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('sendBtn');
+    const btnText = document.getElementById('sendBtnText');
+    const btnSpinner = document.getElementById('sendBtnSpinner');
+
+    // Active le loader
+    submitBtn.disabled = true;
+    btnText.textContent = 'Submitting...';
+    btnSpinner.classList.remove('d-none');
+  });
+  document.getElementById('importClientForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('submitBtnText');
+    const btnSpinner = document.getElementById('submitBtnSpinner');
+
+    // Active le loader
+    submitBtn.disabled = true;
+    btnText.textContent = 'Submitting...';
+    btnSpinner.classList.remove('d-none');
+  });
+  document.getElementById('mappingForm').addEventListener('submit', function(e) {
+    const importBtn = document.getElementById('importBtn');
+    const importBtnText = document.getElementById('importBtnText');
+    const importBtnSpinner = document.getElementById('importBtnSpinner');
+
+    // Active le loader
+    importBtn.disabled = true;
+    importBtnText.textContent = 'Importing...';
+    importBtnSpinner.classList.remove('d-none');
+  });
+</script>
+
+<!-- delete Client script-->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Gestion de la suppression d’un client
+    document.querySelectorAll('.btn-delete-client').forEach(button => {
+      button.addEventListener('click', async () => {
+        const clientId = button.getAttribute('data-id');
+
+        const confirmDelete = confirm("Voulez-vous vraiment supprimer ce client ?");
+        if (!confirmDelete) return;
+
+        try {
+          const response = await fetch(`/clients/${clientId}/deleteClient`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+              _method: 'DELETE'
+            }).toString()
+          });
+
+          if (response.ok) {
+            window.location.reload(); // 🔁 recharge la page si suppression réussie
+          } else {
+            const errText = await response.text();
+            console.error("Erreur suppression client:", errText);
+            alert("Échec de la suppression du client.");
+          }
+        } catch (err) {
+          console.error("Erreur lors de la requête:", err);
+          alert("Erreur réseau lors de la suppression.");
+        }
+      });
+    });
+  });
+</script>
