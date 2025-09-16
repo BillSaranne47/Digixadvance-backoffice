@@ -10,6 +10,7 @@ const bankRoutes = require('./routes/bankRoutes');
 const clientRoutes = require('./routes/clientRoutes');
 const authRoutes = require('./routes/authRoutes');
 const fundRoutes = require('./routes/fundRoutes');
+const overdraftRoutes = require('./routes/overdraftRoutes');
 const i18n = require('i18n');
 const cookieParser = require('cookie-parser');
 
@@ -147,6 +148,7 @@ app.use('/users', usersRouter);
 app.use('/banks', bankRoutes);
 app.use('/clients', clientRoutes);
 app.use('/funds', fundRoutes);
+app.use('/overdraft', overdraftRoutes);
 // app.use('/2fa', twofaRouter);
 
 //  Error handlers

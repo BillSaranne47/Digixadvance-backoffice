@@ -1,0 +1,143 @@
+<div class="row">
+    <!-- daily report table -->
+    <!-- <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <h4 class="card-title">Daily Report</h4>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="page-length" class="display table dataTable">
+                        <thead>
+                            <tr>
+                                <th class="table-plus">#</th>
+                                <th>Period</th>
+                                <th>Total</th>
+                                <th>Refund</th>
+                                <th>Commission</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (DailyReport.length> 0) { %>
+                                <% DailyReport.forEach((item, index)=> { %>
+                                    <tr>
+                                        <% let period='N/A' ; try { const d=new Date(item.period); const
+                                            weekday=d.toLocaleDateString('en-US', { weekday: 'short' }); const
+                                            day=String(d.getDate()).padStart(2, '0' ); const
+                                            month=d.toLocaleDateString('en-US', { month: 'short' }); const
+                                            year=d.getFullYear(); const hours=String(d.getHours()).padStart(2, '0' );
+                                            const minutes=String(d.getMinutes()).padStart(2, '0' ); period=`${weekday}
+                                            ${day} ${month} ${year} ${hours}:${minutes}`; } catch (err) {
+                                            period='Invalid Date' ; } %>
+                                            <td>
+                                                <%= index + 1 %>
+                                            </td>
+                                            <td>
+                                                <%= period %>
+                                            </td>
+                                            <td>
+                                                <%= item.total || 0 %>
+                                            </td>
+                                            <td>
+                                                <%= item.refund || 0 %>
+                                            </td>
+                                            <td>
+                                                <%= item.commission || 0 %>
+                                            </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No Daily reports found.
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <%= __('daily_Reports') %>
+                </h4>
+            </div>
+            <div class="card-body">
+
+                <% if (DailyReport.length> 0) { %>
+                    <% DailyReport.forEach((item, index)=> { %>
+                        <% let period='N/A' ; try { const d=new Date(item.period); const
+                        weekday=d.toLocaleDateString('en-US', { weekday: 'short' }); const
+                        day=String(d.getDate()).padStart(2, '0' ); const
+                        month=d.toLocaleDateString('en-US', { month: 'short' }); const
+                        year=d.getFullYear(); const hours=String(d.getHours()).padStart(2, '0' );
+                        const minutes=String(d.getMinutes()).padStart(2, '0' ); period=`${weekday}
+                        ${day} ${month} ${year} ${hours}:${minutes}`; } catch (err) {
+                        period='Invalid Date' ; } %>
+                    <div class="d-flex flex-column gap-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <strong class="me-2">
+                                <%= __('Period') %>:
+                            </strong>
+                            <span>
+                                <%= period %>
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+
+                            <strong class="me-2">
+                                <%= __('Total') %>:
+                            </strong>
+                            <span>
+                                <%= item.total || 0 %>
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+
+                            <strong class="me-2">
+                                <%= __('Refund') %>:
+                            </strong>
+                            <span>
+                                <%= item.refund || 0 %>
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+
+                            <strong class="me-2">
+                                <%= __('Commission') %>:
+                            </strong>
+
+                            <span>
+                                <%= item.commission || 0 %> 
+                            </span>
+                        </div>
+
+                        
+
+                    </div>
+                    <% }) %>
+                    <% } else { %>
+                        <p class="text-muted">
+                            <%= __('No_Daily_reports_found.') %>
+                        </p>
+                    <% } %>
+
+            </div>
+
+        </div>
+    </div>
+</div>

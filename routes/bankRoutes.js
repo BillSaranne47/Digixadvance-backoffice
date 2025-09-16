@@ -12,6 +12,7 @@ router.post('/:id/delete',requireAuth, noCache,requireNoBankId,verifyToken,verif
 
 router.post('/:id/update',requireAuth, noCache,requireNoBankId,verifyToken,verifyRole(['Admin']), bankController.saveUpdatedBank);
 
+router.post('/:id/updatebank',requireAuth, noCache,verifyToken, bankController.UpdateBankInfo);
 
 // router.get('/listConfig',requireAuth, noCache, bankController.getbanksConfig);
 // router.post('/saveConfig',requireAuth, noCache, bankController.saveConfig);

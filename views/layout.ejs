@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DigiXavance</title>
+    <title>DigiXAdvance</title>
     <link rel="icon" href="/assets/img/kaiadmin/app_icon.png" type="image/x-icon"/>
      <!-- Fonts and icons -->
     <script src="/assets/js/plugin/webfont/webfont.min.js"></script>
@@ -229,6 +229,7 @@
       $('.nav-collapse a').each(function () {
         if (this.pathname === path) {
           // Highlight the active sub-item
+          $(this).addClass('active');
           $(this).find('.sub-item').addClass('active');
 
           // Expand the parent collapse menu
@@ -241,12 +242,25 @@
     });
   </script>
 
-  <!-- table page length -->
-<!-- <script>
-  $(document).ready(function () {
-    initializeDataTableExport('#page-length');
-  });
-</script> -->
+  <!-- <script>
+    $(document).ready(function () {
+      let path = window.location.pathname;
+
+      // Loop through each sub-item link
+      $('.nav-collapse a').each(function () {
+        if (this.pathname === path) {
+          // Highlight the active sub-item
+          $(this).find('.sub-item').addClass('active');
+
+          // Expand the parent collapse menu
+          $(this).closest('.collapse').addClass('show');
+
+          // Highlight the main nav-item
+          $(this).closest('.nav-item').addClass('active');
+        }
+      });
+    });
+  </script> -->
 
   <!-- clean the response on the url after an update or a submit in a modal -->
   <script>

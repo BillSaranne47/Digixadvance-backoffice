@@ -5,7 +5,7 @@
     <a href="/dashboard" class="logo align-items-center">
     
    
-    <h4 class="text-white mb-0">DigiXavance</h4>
+    <h4 class="text-white mb-0">DigiXAdvance</h4>
   </a>
   
   <div class="nav-toggle">
@@ -114,7 +114,28 @@
               <p><%= __('fund') %></p>
             </a>
           </li>
-          
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" href="#base">
+              <i class="fas fa-file-alt"></i>
+              <p><%= __('reports') %></p>
+              <span class="caret"></span>
+            </a>
+            <div class="collapse" id="base">
+              <ul class="nav nav-collapse">
+                <li>
+                  <a href="/overdraft/dailyreport">
+                    <span class="sub-item"><%= __('daily_Reports') %></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="/overdraft/monthlyreport">
+                    <span class="sub-item"><%= __('monthly_Reports') %></span>
+                  </a>
+                </li>
+               
+              </ul>
+            </div>
+          </li>
 
         <% } %>
         

@@ -7,102 +7,33 @@ const OverdraftbaseUrl = process.env.OverdraftbaseUrl;
 const UserbaseUrl = process.env.UserbaseUrl;
 const BankbaseUrl = process.env.BankbaseUrl;
 
-// exports.getClients = async (req, res) => {
-//     try {
-//         const user = req.session.user;
-//         let clients = [];
-//         let subscriptions = [];
-
-//         if (user && (user.bank_id || user.bank_id === null)) {
-//             const bankId = user.bank_id;
-
-//             let response = [];
-//             try {
-//                 response = await apiRequest.get(`${UserbaseUrl}api/clients/bank`, req);
-//             } catch (err) {
-//                 if (err.status === 404) {
-//                     console.log("Aucun client trouvé pour cette banque.");
-//                     response = [];
-//                 } else {
-//                     throw err;
-//                 }
-//             }
-
-//             let subscribe = [];
-//             try {
-//                 subscribe = await apiRequest.get(`${UserbaseUrl}api/subscription/client-subscriptions/bank_id`, req);
-//             } catch (err) {
-//                 if (err.status === 404) {
-//                     console.log("Aucun subscribtion trouvé pour cette banque.");
-//                     subscribe = [];
-//                 } else {
-//                     throw err;
-//                 }
-//             }
-
-//             clients = response;
-//             subscriptions = subscribe;
-//         } else {
-//             const response = await apiRequest.get(`${UserbaseUrl}api/clients/getAllClients`, req);
-//             clients = response;
-//         }
-
-
-//         // Associer chaque client à son abonnement le plus récent
-//         const clientsWithSub = clients.map(client => {
-//             const clientSubs = subscriptions
-//                 .filter(s => s.client_id === client.id)
-//                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); 
-
-//             const latestSub = clientSubs[0] || null;
-
-//             return {
-//                 ...client,
-//                 subscription: latestSub
-//             };
-//         });
-
-      
-//         res.render('pages/client/list', {
-//             title: 'Client List',
-//             clients: clientsWithSub
-//         });
-
-//     } catch (error) {
-//         console.error("Error fetching client:", error);
-//         res.render('pages/client/list', {
-//             title: 'fund list',
-//             clients: [],
-//             user: req.session.user,
-//         });
-//     }
-// };
 exports.getClients = async (req, res) => {
     try {
         const user = req.session.user;
         let clients = [];
         let subscriptions = [];
 
-        // If user has a bank_id OR is an admin (bank_id === null)
-        if (user && (user.bank_id || user.bank_id === null)) {
-            let response = [];
-            let subscribe = [];
+        if (user && user.bank_id) {
+            const bankId = user.bank_id;
 
+            let response = [];
             try {
-                if (user.bank_id) {
-                    // Regular user with a bank
-                    response = await apiRequest.get(`${UserbaseUrl}api/clients/bank`, req);
-                    subscribe = await apiRequest.get(`${UserbaseUrl}api/subscription/client-subscriptions/bank_id`, req);
-                } else {
-                    // Admin with bank_id === null
-                    response = await apiRequest.get(`${UserbaseUrl}api/clients/getAllClients`, req);
-                    subscribe = await apiRequest.get(`${UserbaseUrl}api/subscription/client-subscriptions`, req); 
-                    // adjust this endpoint if needed
-                }
+                response = await apiRequest.get(`${UserbaseUrl}api/clients/bank`, req);
             } catch (err) {
                 if (err.status === 404) {
-                    console.log("No clients or subscriptions found.");
+                    console.log("Aucun client trouvé pour cette banque.");
                     response = [];
+                } else {
+                    throw err;
+                }
+            }
+
+            let subscribe = [];
+            try {
+                subscribe = await apiRequest.get(`${UserbaseUrl}api/subscription/client-subscriptions/bank_id`, req);
+            } catch (err) {
+                if (err.status === 404) {
+                    console.log("Aucun subscribtion trouvé pour cette banque.");
                     subscribe = [];
                 } else {
                     throw err;
@@ -112,22 +43,26 @@ exports.getClients = async (req, res) => {
             clients = response;
             subscriptions = subscribe;
         } else {
-            // fallback: just fetch all clients
-            clients = await apiRequest.get(`${UserbaseUrl}api/clients/getAllClients`, req);
+            const response = await apiRequest.get(`${UserbaseUrl}api/clients/getAllClients`, req);
+            clients = response;
         }
 
-        // Attach the latest subscription to each client
+
+        // Associer chaque client à son abonnement le plus récent
         const clientsWithSub = clients.map(client => {
             const clientSubs = subscriptions
                 .filter(s => s.client_id === client.id)
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); 
+
+            const latestSub = clientSubs[0] || null;
 
             return {
                 ...client,
-                subscription: clientSubs[0] || null
+                subscription: latestSub
             };
         });
 
+      
         res.render('pages/client/list', {
             title: 'Client List',
             clients: clientsWithSub
@@ -136,12 +71,77 @@ exports.getClients = async (req, res) => {
     } catch (error) {
         console.error("Error fetching client:", error);
         res.render('pages/client/list', {
-            title: 'Client List',
+            title: 'fund list',
             clients: [],
             user: req.session.user,
         });
     }
 };
+// exports.getClients = async (req, res) => {
+//     try {
+//         const user = req.session.user;
+//         let clients = [];
+//         let subscriptions = [];
+
+//         // If user has a bank_id OR is an admin (bank_id === null)
+//         if (user && (user.bank_id || user.bank_id === null)) {
+//             let response = [];
+//             let subscribe = [];
+
+//             try {
+//                 if (user.bank_id) {
+//                     // Regular user with a bank
+//                     response = await apiRequest.get(`${UserbaseUrl}api/clients/bank`, req);
+//                     subscribe = await apiRequest.get(`${UserbaseUrl}api/subscription/client-subscriptions/bank_id`, req);
+//                 } else {
+//                     // Admin with bank_id === null
+//                     response = await apiRequest.get(`${UserbaseUrl}api/clients/getAllClients`, req);
+//                     subscribe = await apiRequest.get(`${UserbaseUrl}api/subscription/client-subscriptions`, req); 
+//                     // adjust this endpoint if needed
+//                 }
+//             } catch (err) {
+//                 if (err.status === 404) {
+//                     console.log("No clients or subscriptions found.");
+//                     response = [];
+//                     subscribe = [];
+//                 } else {
+//                     throw err;
+//                 }
+//             }
+
+//             clients = response;
+//             subscriptions = subscribe;
+//         } else {
+//             // fallback: just fetch all clients
+//             clients = await apiRequest.get(`${UserbaseUrl}api/clients/getAllClients`, req);
+//         }
+
+//         // Attach the latest subscription to each client
+//         const clientsWithSub = clients.map(client => {
+//             const clientSubs = subscriptions
+//                 .filter(s => s.client_id === client.id)
+//                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+//             return {
+//                 ...client,
+//                 subscription: clientSubs[0] || null
+//             };
+//         });
+
+//         res.render('pages/client/list', {
+//             title: 'Client List',
+//             clients: clientsWithSub
+//         });
+
+//     } catch (error) {
+//         console.error("Error fetching client:", error);
+//         res.render('pages/client/list', {
+//             title: 'Client List',
+//             clients: [],
+//             user: req.session.user,
+//         });
+//     }
+// };
 
 
 exports.listInfo = async (req, res) => {
@@ -184,7 +184,7 @@ exports.listInfo = async (req, res) => {
     }
 };
 
-exports.updateClientInfo = async (req, res) => {
+exports.updatescoring = async (req, res) => {
     const { scoring, client_id } = req.body;
 
     try {
@@ -413,7 +413,7 @@ exports.resetDebt = async (req, res) => {
 
         await apiRequest.post(`${OverdraftbaseUrl}api/overdrafts/reset-debt`, { client_id, amount_paid }, req);
 
-        return res.redirect('/clients/list?success=' + encodeURIComponent('Client debt repaid'));
+        return res.redirect(`/clients/${client_id}/listInfo?success=` + encodeURIComponent('Client debt repaid'));
 
     } catch (error) {
         console.error("error in resetting:", error);
@@ -475,4 +475,30 @@ exports.revertOverdraft = async (req, res) => {
     console.error('Revert overdraft error:', error.response?.data || error.message);
     return res.redirect(`/clients/${clientId}/listInfo?error=` + encodeURIComponent('Error in reverting the overdraft'));
   }
+};
+
+exports.updateClient = async (req, res) => {
+    try {
+        const { client_id, name, msisdn, email } = req.body;
+
+        if (!client_id || !name || !msisdn || !email) {
+            return res.redirect(`/clients/${client_id}/listInfo?error=` + encodeURIComponent('All fields are required'));
+        }
+
+        // Format phone number (keep same logic as saveClient)
+        const formatPhone = (number) => {
+            const clean = number.replace(/^(\+?237)?0?/, '').trim();
+            return `237${clean}`;
+        };
+        const formattedPhone = formatPhone(msisdn);
+
+        const payload = { name, msisdn: formattedPhone, email };
+
+        await apiRequest.put(`${UserbaseUrl}api/clients/${client_id}`, payload, req);
+
+        return res.redirect(`/clients/${client_id}/listInfo?success=` + encodeURIComponent('Client updated successfully'));
+    } catch (error) {
+        console.error("❌ Error updating client:", error?.response?.data || error);
+        return res.redirect(`/clients/${req.body.client_id}/listInfo?error=` + encodeURIComponent('Error updating client'));
+    }
 };

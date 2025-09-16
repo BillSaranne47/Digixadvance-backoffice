@@ -20,6 +20,12 @@
                             <i class="fas fa-user-edit"></i>
                             <%= __('Update Profile') %>
                         </a>
+                        <a class="nav-link" id="v-pills-bank-tab-icons" data-bs-toggle="pill"
+                            href="#updatebank-tab" role="tab" aria-controls="updatebank-tab"
+                            aria-selected="false">
+                            <i class="fas fa-pen"></i>
+                            <%= __('Update_bank') %>
+                        </a>
                         <a class="nav-link" id="v-pills-2FA-tab-icons" data-bs-toggle="pill"
                             href="#2FA-tab" role="tab" aria-controls="2FA-tab"
                             aria-selected="false">
@@ -80,6 +86,51 @@
                             
                         </div>
 
+                        <!-- update bank profile tab -->
+                        <div class="tab-pane fade" id="updatebank-tab" role="tabpanel"
+                            aria-labelledby="v-pills-profile-tab-icons">
+                            <div class="profile card shadow-sm border-0 p-4 rounded">
+                                <form action="/banks/<%= user.bank_id %>/updatebank" method="post">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="name"><%= __('Name') %></label>
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="<%= __('Enter bank name') %>" required />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="short_name"><%= __('Short Name') %></label>
+                                            <input type="text" class="form-control" id="short_name" name="short_name" placeholder="<%= __('Enter short name') %>" required />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="logo_url"><%= __('Logo URL') %></label>
+                                            <input type="file" class="form-control" id="logo_url" name="logo_url" accept=".jpg,.jpeg,.png,.svg" placeholder="<%= __('Enter logo URL') %>" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="contact"><%= __('Contact') %></label>
+                                            <input type="text" class="form-control" id="contact" name="contact" placeholder="<%= __('Enter contact') %>" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="address"><%= __('Address') %></label>
+                                            <input type="text" class="form-control" id="address" name="address" placeholder="<%= __('Enter address') %>" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="latitude"><%= __('Latitude') %></label>
+                                            <input type="text" class="form-control" id="latitude" name="latitude" placeholder="<%= __('Enter latitude') %>" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="longitude"><%= __('Longitude') %></label>
+                                            <input type="text" class="form-control" id="longitude" name="longitude" placeholder="<%= __('Enter longitude') %>" />
+                                        </div>
+                                    </div>
+                                    <div class="card-action">
+                                        <button type="submit" class="btn btn-primary"><%= __('Submit') %></button>
+                                        <a href="/dashboard" class="btn btn-danger"><%= __('Cancel') %></a>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                        </div>
+
                         <!-- privacy and security tab -->
                         <div class="tab-pane fade" id="2FA-tab" role="tabpanel"
                                     aria-labelledby="v-pills-2FA-tab-icons">
@@ -124,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.twofaEnabled) {
                     container.innerHTML = `
                         <h5>Two-Factor Authentication</h5>
-                        <p>✅ Two-factor authentication is enabled.</p>
+                        <p>Two-factor authentication is enabled.</p>
                         <form action="/twofa/disable" method="POST">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-danger">Disable 2FA</button>

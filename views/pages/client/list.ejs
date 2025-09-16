@@ -33,7 +33,9 @@
                 <th>#</th>
                 <th><%= __('name') %></th>
                 <th><%= __('phone_number') %></th>
-                <th><%= __('subscription') %></th>
+                <% if (user.bank_id) { %>
+                  <th><%= __('subscription') %></th>
+                <% }  %>
                 <th class="no-export"><%= __('action') %></th>
               </tr>
             </thead>
@@ -50,21 +52,23 @@
                 <td>
                   <%= client.msisdn %>
                 </td>
-                <td>
-                  <% if (client.subscription) { %>
-                  <% if (client.subscription.status==='ACTIVE' ) { %>
-                  <span class="badge bg-success">ACTIVE</span>
-                  <% } else if (client.subscription.status==='FAILED' ) { %>
-                  <span class="badge bg-danger">FAILED</span>
-                  <% } else { %>
-                  <span class="badge bg-secondary">
-                    <%= client.subscription.status %>
-                  </span>
-                  <% } %>
-                  <% } else { %>
-                  <span class="badge bg-warning text-dark"><%= __('no_subscription') %></span>
-                  <% } %>
-                </td>
+                <% if (user.bank_id) { %>
+                  <td>
+                    <% if (client.subscription) { %>
+                    <% if (client.subscription.status==='ACTIVE' ) { %>
+                    <span class="badge bg-success">ACTIVE</span>
+                    <% } else if (client.subscription.status==='FAILED' ) { %>
+                    <span class="badge bg-danger">FAILED</span>
+                    <% } else { %>
+                    <span class="badge bg-secondary">
+                      <%= client.subscription.status %>
+                    </span>
+                    <% } %>
+                    <% } else { %>
+                    <span class="badge bg-warning text-dark"><%= __('no_subscription') %></span>
+                    <% } %>
+                  </td>
+                <% }  %>
                 <td>
                   <div class="form-button-action">
                     <a href="/clients/<%= client.id %>/listInfo" class="btn border-info-subtle"><%= __('view') %></a>

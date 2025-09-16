@@ -1,8 +1,29 @@
 const apiRequest = require('../services/api');
-
+const multer = require('multer');
+const path = require('path');
 const BankbaseUrl = process.env.BankbaseUrl;
 const fundbaseUrl = process.env.fundbaseUrl;
 const UserbaseUrl = process.env.UserbaseUrl;
+
+const storage = multer.diskStorage({
+  destination: './public/uploads/',
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png|svg/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+    if (extname && mimetype) {
+      return cb(null, true);
+    }
+    cb('Error: Images Only!');
+  }
+}).single('logo_url');
 
 exports.getbanks = async (req, res) => {
     try {
@@ -242,3 +263,42 @@ exports.updateConfig = async (req, res) => {
         return res.status(500).json({ error: error.message || 'Erreur serveur' });
     }
 };
+
+exports.UpdateBankInfo = async (req, res) => {
+  upload(req, res, async (err) => {
+    const { name, short_name, contact, address, latitude, longitude } = req.body;
+    const id = req.session.user.bank_id;
+
+    if (err) {
+      console.error("Erreur lors du téléchargement de l'image:", err);
+      return res.redirect(`/dashboard?error=` + encodeURIComponent('Error uploading image'));
+    }
+
+    let logo_url = req.file ? `/uploads/${req.file.filename}` : null;
+    const bankdata = { name, short_name, logo_url, contact, address, latitude, longitude };
+
+    try {
+      await apiRequest.put(`${BankbaseUrl}api/banks/updateBank/${id}`, bankdata, req);
+      return res.redirect(`/dashboard?success=` + encodeURIComponent('Bank updated'));
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la banque:", error);
+      res.redirect(`/dashboard?error=` + encodeURIComponent('error in updating'));
+    }
+  });
+};
+
+// exports.UpdateBankInfo = async (req, res) => {
+//     const {  name, short_name, logo_url, contact, address, latitude, longitude } = req.body;
+//     const id = req.session.user.bank_id;
+   
+//     try {
+//         const bankdata = { name, short_name, logo_url, contact, address, latitude, longitude };
+//         console.log('bankdata', bankdata);
+        
+//         await apiRequest.put(`${BankbaseUrl}api/banks/updateBank/${id}`, bankdata,req);
+//         return res.redirect(`/dashboard?success=` + encodeURIComponent('Bank updated'));
+//     } catch (error) {
+//         console.error("Erreur lors de la mise à jour de la banque:", error);
+//         res.redirect(`/dashboard?error=` + encodeURIComponent('error in updating'));
+//     }
+// };

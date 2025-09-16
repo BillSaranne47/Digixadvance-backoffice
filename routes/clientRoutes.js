@@ -10,7 +10,7 @@ const upload = multer({ storage });
 router.get('/list',requireAuth, noCache,verifyToken, clientController.getClients);
 router.get('/:id/listInfo',requireAuth, noCache,verifyToken, clientController.listInfo);
 
-router.post('/updateClientInfo',requireAuth, noCache,verifyToken, clientController.updateClientInfo);
+router.post('/updateClientInfo',requireAuth, noCache,verifyToken, clientController.updatescoring);
 
 router.post('/:id/deleteClient',requireAuth, noCache,verifyToken, clientController.deleteClient);
 router.post('/save',requireAuth, noCache,verifyToken, clientController.saveClient);
@@ -27,5 +27,6 @@ router.post('/:id/resetPinCode', requireAuth, noCache, verifyToken, clientContro
 
 router.post('/:id/revertOverdraft', requireAuth, verifyToken,clientController.revertOverdraft);
 
+router.post('/:id/updateClient', requireAuth, noCache, verifyToken, clientController.updateClient);
 
 module.exports = router;
